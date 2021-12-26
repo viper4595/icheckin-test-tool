@@ -1,0 +1,20 @@
+config:
+  target: " "
+  phases:
+    - duration: 1
+      arrivalRate: 1
+      name: Sign up 10 users
+  processor: "./processors/helpers.js"
+
+scenarios:
+  - beforeScenario: "configEnv"
+    flow:
+      - name: "Sign up 10 users"
+        loop:
+          - post:
+              url: "{{ $processEnvironment.URL }}/signup"
+              json:
+                name: "{{ $processEnvironment.SECRET }} {{ $loopCount }}"
+                email: "test+{{ $loopCount }}@gmail.com"
+                password: "111111"
+        count: 10

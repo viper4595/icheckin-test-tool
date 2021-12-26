@@ -1,0 +1,27 @@
+{
+  "name": "icheckin-test-tool",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_ENV=development node index.js",
+    "start-stag": "NODE_ENV=staging node index.js",
+    "test": "npx artillery run ./test/user-signup.yml && artillery run ./test/user-create-event.yml",
+    "test-stag": "NODE_ENV=staging npx artillery run ./test/user-signup.yml && NODE_ENV=staging  artillery run ./test/user-create-event.yml",
+    "test-socket": "npx artillery run ./test/socket.yml"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apisauce": "^2.1.1",
+    "artillery-engine-socketio-v3": "^1.1.2",
+    "bson-objectid": "^2.0.1",
+    "dotenv": "^10.0.0",
+    "lodash": "^4.17.21",
+    "ramda": "^0.25.0",
+    "socket.io-client": "^4.2.0"
+  },
+  "devDependencies": {
+    "artillery": "^1.7.8"
+  }
+}

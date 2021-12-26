@@ -1,0 +1,13 @@
+config:
+  target: "https://icheckin-copy.herokuapp.com"
+  phases:
+    - duration: 4
+      arrivalRate: 1000
+  engines:
+    socketio-v3: {}
+
+scenarios:
+  - name: Load test
+    engine: socketio-v3
+    flow:
+      - emit: ["eventId", "6135e0c4fecd5d0041409396"]

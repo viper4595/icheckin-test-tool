@@ -1,0 +1,23 @@
+config:
+  target: " "
+  phases:
+    - duration: 1
+      arrivalRate: 10
+  engines:
+    socketio-v3: {}
+  payload:
+    path: "attendants.csv"
+    fields:
+      - "pinCode"
+    order: sequence
+  processor: "./processors/helpers.js"
+
+scenarios:
+  - engine: socketio-v3
+    beforeScenario: "configEnv"
+    flow:
+      - post:
+          url: "{{ $processEnvironment.URL }}/checkin"
+          json:
+            attendantEmail: "A"
+            pinCode: "B"

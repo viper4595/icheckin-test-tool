@@ -1,0 +1,104 @@
+config:
+  target: " "
+  phases:
+    - duration: 10
+      arrivalRate: 1
+      name: Create 10 events + quiz + questions + 4000 attendants for each event
+  payload:
+    path: "sequence.csv"
+    fields:
+      - "count"
+    order: sequence
+  processor: "./processors/helpers.js"
+
+scenarios:
+  - beforeScenario: "configEnv"
+    flow:
+      - log: "Login user {{ count }}"
+      - post:
+          url: "{{ $processEnvironment.URL }}/login"
+          json:
+            email: "test+{{ count }}@gmail.com"
+            password: "111111"
+          capture:
+            - json: "$.accessToken"
+              as: "accessToken"
+            - json: "$.id"
+              as: "userId"
+
+      - log: "Create event for user {{ count }}"
+      - post:
+          url: "{{ $processEnvironment.URL }}/newevent"
+          headers:
+            Authorization: "{{ accessToken }}"
+          beforeRequest: "generateDate"
+          afterResponse: "saveEvent"
+          json:
+            eventName: "Test Event {{ $processEnvironment.SECRET }} {{ count }}"
+            eventVenue: "Here"
+            startDate: "{{ startDate }}"
+            endDate: "{{ endDate }}"
+            initialScore: 0
+          capture:
+            - json: "$._id"
+              as: "eventId"
+
+      - log: "Create quiz for event {{ count }}"
+      - post:
+          url: "{{ $processEnvironment.URL }}/newquiz"
+          headers:
+            Authorization: "{{ accessToken }}"
+          json:
+            eventId: "{{ eventId }}"
+            quizName: "Test Quiz {{ $processEnvironment.SECRET }} {{ count }}"
+          capture:
+            - json: "$._id"
+              as: "quizId"
+
+      - log: "Create question 1 for quiz {{ count }}"
+      - post:
+          url: "{{ $processEnvironment.URL }}/newquestion"
+          headers:
+            Authorization: "{{ accessToken }}"
+          beforeRequest: "generateQuestions"
+          afterResponse: "saveQuestion"
+          json:
+            eventId: "{{ eventId }}"
+            quizId: "{{ quizId }}"
+            question: "{{ $processEnvironment.SECRET }} {{ questionOne }}"
+            options: "{{ optionsOne }}"
+            answer: "{{ answerOne }}"
+            duration: 10
+            score: 100
+            videoUrl: ""
+
+      - log: "Create question 2 for quiz {{ count }}"
+      - post:
+          url: "{{ $processEnvironment.URL }}/newquestion"
+          headers:
+            Authorization: "{{ accessToken }}"
+          beforeRequest: "generateQuestions"
+          json:
+            eventId: "{{ eventId }}"
+            quizId: "{{ quizId }}"
+            question: "{{ $processEnvironment.SECRET }} {{ questionTwo }}"
+            options: "{{ optionsTwo }}"
+            answer: "{{ answerTwo }}"
+            duration: 10
+            score: 100
+            videoUrl: ""
+
+      # - loop:
+      #     - log: "Create 400 attendants for {{ count }} (total: 4000 attendants)"
+      #     - post:
+      #         url: "{{ $processEnvironment.URL }}/registration"
+      #         headers:
+      #           Authorization: "{{ accessToken }}"
+      #         afterResponse: "saveAttendant"
+      #         json:
+      #           eventId: "{{ eventId }}"
+      #           attendantName: "Attendant {{ $processEnvironment.SECRET }} {{ $loopCount }}}"
+      #           attendantEmail: "test+{{ count }}+{{ $loopCount }}@gmail.com"
+      #           department: "AAA"
+
+      #   count: 400

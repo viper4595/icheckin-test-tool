@@ -1,0 +1,25 @@
+# Playground
+config:
+  target: " "
+  phases:
+    - duration: 1
+      arrivalRate: 1
+  processor: "./processors/helpers.js"
+scenarios:
+  - beforeScenario: "configEnv"
+    flow:
+      - post:
+          url: "{{ $processEnvironment.URL }}/newquestion"
+          headers:
+            Authorization: "09636f581d20b52c72ee52c16f88b112c615945929dc9b5611813a7817311fc286a44ec7ff3ae2241883f55f4ec762f03fba665d139da6897d90c9565bd84e39e9b1a22dae0174e0d69531086f4010c95b5ea053933126481011e7a41e3861c64c81976f1198343bce3791633af0c6d3c8eb70cfd5c88e869e0e7f07c607beec"
+          beforeRequest: "generateQuestions"
+          json:
+            eventId: "61348f9e497402d870a7aa9c"
+            quizId: "61348f9e497402d870a7aa9d"
+            question: "{{ $processEnvironment.SECRET }} {{ questionOne }}"
+            options: "{{ optionsOne }}"
+            answer: "{{ answerOne }}"
+            duration: 10
+            score: 100
+            videoUrl: ""
+      # beforeRequest: "myFunction"
